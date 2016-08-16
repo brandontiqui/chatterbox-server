@@ -34,6 +34,7 @@ describe('server', function() {
   });
 
   it('should accept POST requests to /send', function(done) {
+    console.log('test of focus');
     var requestParams = {method: 'POST',
       uri: 'http://127.0.0.1:3000/classes/messages',
       json: {

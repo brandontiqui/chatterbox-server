@@ -25,6 +25,7 @@ var obj = {};
 obj.results = [];
 
 var requestHandler = function(request, response) {
+
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -55,20 +56,31 @@ var requestHandler = function(request, response) {
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-
-
+  console.log('hi');
 
   var statusCode;
   var body = [];
   var dataObject = JSON.stringify(obj);
 
   if (request.method === 'GET') {
-    statusCode = 200;
+
+    // console.log('argle: ' + request.url);
+
+    if (request.url.indexOf('classes/messages') === -1) {
+      response.statusCode = 404;
+    } else {
+      response.statusCode = 200;
+    }
+
+    response.writeHead(response.statusCode, headers);
+    console.log('status code for post is', response.statusCode);
     response.end(dataObject);
 
   } else if (request.method === 'POST') {
-    statusCode = 201;
-
+    console.log('in Post');
+    response.statusCode = 201;
+    response.writeHead(response.statusCode, headers);
+    console.log('status code for post is', response.statusCode);
     var body = '';
 
     request.on('data', function(data) {
@@ -84,7 +96,7 @@ var requestHandler = function(request, response) {
 
     response.end();
   }
-  response.writeHead(statusCode, headers);
+  //response.writeHead(statusCode, headers);
 
 
 
