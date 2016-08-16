@@ -67,6 +67,8 @@ describe('Node Server Request Listener Function', function() {
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
     var res = new stubs.response();
 
+
+
     handler.requestHandler(req, res);
 
     // Expect 201 Created response status
@@ -84,15 +86,10 @@ describe('Node Server Request Listener Function', function() {
       message: 'Do my bidding!'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
-
-
     var res = new stubs.response();
 
     handler.requestHandler(req, res);
-    console.log('zzzz: ');
-    console.log(req);
-    console.log('resss');
-    // console.log(res);
+
 
     expect(res._responseCode).to.equal(201);
 
@@ -103,8 +100,11 @@ describe('Node Server Request Listener Function', function() {
     handler.requestHandler(req, res);
 
     expect(res._responseCode).to.equal(200);
+    console.log('res._data is', res._data);
     var messages = JSON.parse(res._data).results;
-    console.log('messages is', messages);
+    console.log('messages value is', messages);
+    console.log('messages zero username value is', messages[0].username);
+
     expect(messages.length).to.be.above(0);
     expect(messages[0].username).to.equal('Jono');
     expect(messages[0].message).to.equal('Do my bidding!');

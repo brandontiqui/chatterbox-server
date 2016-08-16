@@ -19,6 +19,11 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+// var messages = [];
+
+var obj = {};
+obj.results = [];
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -51,38 +56,98 @@ var requestHandler = function(request, response) {
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
 
-  var obj = {};
-  obj.results = [];
 
-  if (request._postData) {
-    obj.results.push(request._postData);  
-  }
 
-  var dataObject = JSON.stringify(obj);
+
+
+
   
   //var dataObject = JSON.stringify({ results: [] });
   
   //var dataObject = JSON.stringify(response._data);
 
   //console.log('request postdata value is', request._postData);
-  //console.log('request object is', request);
-  //console.log('response object is', response);
+  // console.log('request object is', request);
+  // console.log('response object is', response);
 
 
-  var statusCode;
+
+
+
+
+
+  // var statusCode;
+  // var body = [];
+  // var dataObject = JSON.stringify(obj);
+
+  // if (request.method === 'GET') {
+  //   statusCode = 200;
+  //   response.end(dataObject);
+
+  // } else if (request.method === 'POST') {
+  //   statusCode = 201;
+
+  //   var body = '';
+
+  //   request.on('data', function(data) {
+  //     //console.log('data value is', data);
+  //     body += data;
+  //     //console.log('body value is', body);
+  //   });
+
+  //   request.on('end', function() {
+  //     //console.log('body right before stringify', body);
+  //     //var post = JSON.stringify(body);
+  //     var post = body;
+  //     //console.log('body being stringified and set to post', post);
+  //     obj.results.push(post);
+  //     // console.log('messages after post', messages);
+  //   });
+
+  //   response.end();
+  // }
+
+
+
+   var statusCode;
+  var body = [];
+  var dataObject = JSON.stringify(obj);
+
   if (request.method === 'GET') {
     statusCode = 200;
     response.end(dataObject);
 
   } else if (request.method === 'POST') {
     statusCode = 201;
-    // console.log('request inside POST', request._postData);
-    // request.write(request._postData);
-    //request(request.url, request.method, request.postdata);
-    // response.end(request._postData);
-    console.log('obj is', obj);
-    response.end(dataObject);
-    //response.end(response._data);
+
+     var body = '';
+
+    request.on('data', function(data) {
+      //console.log('data value is', data);
+       body += data;
+      // body.push(data);
+      //console.log('body value is', body);
+    });
+
+    request.on('end', function() {
+      //console.log('body right before stringify', body);
+      //var post = JSON.stringify(body);
+
+      //body = Buffer.concat(body).toString();
+
+      var post = JSON.parse(body);
+      obj.results.push(post);
+
+
+
+     /* body = body.toString();
+      var post = body;
+      //console.log('body being stringified and set to post', post);
+      obj.results.push(post);
+      // console.log('messages after post', messages);*/
+    });
+
+    response.end();
   }
   response.writeHead(statusCode, headers);
 
