@@ -58,58 +58,7 @@ var requestHandler = function(request, response) {
 
 
 
-
-
-
-  
-  //var dataObject = JSON.stringify({ results: [] });
-  
-  //var dataObject = JSON.stringify(response._data);
-
-  //console.log('request postdata value is', request._postData);
-  // console.log('request object is', request);
-  // console.log('response object is', response);
-
-
-
-
-
-
-
-  // var statusCode;
-  // var body = [];
-  // var dataObject = JSON.stringify(obj);
-
-  // if (request.method === 'GET') {
-  //   statusCode = 200;
-  //   response.end(dataObject);
-
-  // } else if (request.method === 'POST') {
-  //   statusCode = 201;
-
-  //   var body = '';
-
-  //   request.on('data', function(data) {
-  //     //console.log('data value is', data);
-  //     body += data;
-  //     //console.log('body value is', body);
-  //   });
-
-  //   request.on('end', function() {
-  //     //console.log('body right before stringify', body);
-  //     //var post = JSON.stringify(body);
-  //     var post = body;
-  //     //console.log('body being stringified and set to post', post);
-  //     obj.results.push(post);
-  //     // console.log('messages after post', messages);
-  //   });
-
-  //   response.end();
-  // }
-
-
-
-   var statusCode;
+  var statusCode;
   var body = [];
   var dataObject = JSON.stringify(obj);
 
@@ -120,31 +69,17 @@ var requestHandler = function(request, response) {
   } else if (request.method === 'POST') {
     statusCode = 201;
 
-     var body = '';
+    var body = '';
 
     request.on('data', function(data) {
-      //console.log('data value is', data);
-       body += data;
-      // body.push(data);
-      //console.log('body value is', body);
+      body += data;
     });
 
     request.on('end', function() {
-      //console.log('body right before stringify', body);
-      //var post = JSON.stringify(body);
-
-      //body = Buffer.concat(body).toString();
 
       var post = JSON.parse(body);
       obj.results.push(post);
 
-
-
-     /* body = body.toString();
-      var post = body;
-      //console.log('body being stringified and set to post', post);
-      obj.results.push(post);
-      // console.log('messages after post', messages);*/
     });
 
     response.end();
