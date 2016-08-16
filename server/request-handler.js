@@ -37,7 +37,6 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   // The outgoing status.
-  var statusCode = 200;
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -47,16 +46,49 @@ var requestHandler = function(request, response) {
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = 'text/plain';
+  // headers['Content-Type'] = 'application/json';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
-  var test = {name: 'HR'};
 
-  if (request.method === 'GET') {
-    response.write(JSON.stringify(test));
-    response.end('Test');
+  var obj = {};
+  obj.results = [];
+
+  if (request._postData) {
+    obj.results.push(request._postData);  
   }
+
+  var dataObject = JSON.stringify(obj);
+  
+  //var dataObject = JSON.stringify({ results: [] });
+  
+  //var dataObject = JSON.stringify(response._data);
+
+  //console.log('request postdata value is', request._postData);
+  //console.log('request object is', request);
+  //console.log('response object is', response);
+
+
+  var statusCode;
+  if (request.method === 'GET') {
+    statusCode = 200;
+    response.end(dataObject);
+
+  } else if (request.method === 'POST') {
+    statusCode = 201;
+    // console.log('request inside POST', request._postData);
+    // request.write(request._postData);
+    //request(request.url, request.method, request.postdata);
+    // response.end(request._postData);
+    console.log('obj is', obj);
+    response.end(dataObject);
+    //response.end(response._data);
+  }
+  response.writeHead(statusCode, headers);
+
+
+
+
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -65,7 +97,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  // response.end('Hello, World!');
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
