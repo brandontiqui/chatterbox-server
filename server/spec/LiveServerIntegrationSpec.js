@@ -74,5 +74,20 @@ describe('server', function() {
     });
   });
 
+  it('Should 200 when asked for a non-declared endpoint path', function(done) {
+    request('http://127.0.0.1:3000', function(error, response, body) {
+      expect(response.statusCode).to.equal(200);
+      done();
+    });
+  });
+
+  it('Should 200 when asked for a non-declared endpoint path', function(done) {
+    request('http://127.0.0.1:3000', function(error, response, body) {
+      expect(response.statusCode).to.equal(200);
+      done();
+    });
+  });
+
+
 
 });

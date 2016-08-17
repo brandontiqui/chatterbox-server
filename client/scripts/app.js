@@ -4,13 +4,14 @@ var app = {
   //TODO: The current 'toggleFriend' function just toggles the class 'friend'
   //to all messages sent by the user
   //server: 'https://api.parse.com/1/classes/messages/',
-  server: 'http://127.0.0.1:3000',
+  server: 'http://127.0.0.1:3000/classes/messages',
   username: 'anonymous',
   roomname: 'lobby',
   lastMessageId: 0,
   friends: {},
 
   init: function() {
+    console.log('the app ran');
     // Get username
     app.username = window.location.search.substr(10);
 
@@ -27,8 +28,10 @@ var app = {
 
     // Fetch previous messages
     app.startSpinner();
-    app.fetch(false);
 
+
+    app.fetch(false);
+    //app.fetch(true);
     // Poll for new messages
     setInterval(app.fetch, 3000);
   },
@@ -55,22 +58,34 @@ var app = {
   },
 
   fetch: function(animate) {
+    console.log('fetch is running and pulling results');
+
     $.ajax({
       url: app.server,
       type: 'GET',
       contentType: 'application/json',
       data: { order: '-createdAt'},
       success: function(data) {
+        console.log('in fetch success !!!');
         // Don't bother if we have nothing to work with
-        if (!data.results || !data.results.length) { return; }
+        //console.log('did not pass the predicate');
+        console.log('data before parsing', data);
+        data = JSON.parse(data); // parsing
+        console.log('data after parsing', data);
+
+        if (!data.results || !data.results.length) { 
+          console.log('entered into the predicate');
+          return; 
+        }
 
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
         var displayedRoom = $('.chat span').first().data('roomname');
         app.stopSpinner();
         // Only bother updating the DOM if we have a new message
-        if (mostRecentMessage.objectId !== app.lastMessageId || app.roomname !== displayedRoom) {
+        if (/*true || */mostRecentMessage.objectId !== app.lastMessageId || app.roomname !== displayedRoom) {
           // Update the UI with the fetched rooms
+          console.log('updateui');
           app.populateRooms(data.results);
 
           // Update the UI with the fetched messages
@@ -95,8 +110,10 @@ var app = {
 
     app.clearMessages();
     app.stopSpinner();
+
     if (Array.isArray(results)) {
       // Add all fetched messages
+      console.log('entered into the array-check');
       results.forEach(app.addMessage);
     }
 
@@ -113,7 +130,7 @@ var app = {
 
   populateRooms: function(results) {
     app.$roomSelect.html('<option value="__newRoom">New room...</option><option value="" selected>Lobby</option></select>');
-
+    console.log('populateRooms');
     if (results) {
       var rooms = {};
       results.forEach(function(data) {
@@ -235,3 +252,4 @@ var app = {
   }
 };
 
+//module.exports.stopSpinner = app.stopSpinner;

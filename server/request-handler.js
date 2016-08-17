@@ -16,13 +16,21 @@ var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'access-control-allow-headers': 'content-type, accept',
+  //'access-control-allow-headers': 'X-Requested-With',
   'access-control-max-age': 10 // Seconds.
+};
+
+var optionsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'POST',
+  'access-control-allow-headers': 'content-type'
 };
 
 // var messages = [];
 
 var obj = {};
-obj.results = [];
+var count = 0;
+obj.results = [{value: null, objectId: -1}];
 
 var requestHandler = function(request, response) {
 
@@ -56,28 +64,27 @@ var requestHandler = function(request, response) {
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  console.log('hi');
 
   var statusCode;
   var body = [];
   var dataObject = JSON.stringify(obj);
-
   if (request.method === 'GET') {
 
-    // console.log('argle: ' + request.url);
-
-    if (request.url.indexOf('classes/messages') === -1) {
+    if (request.url === '/') {
+      response.statusCode = 200;
+    } else if (request.url.indexOf('classes/messages') === -1) {
       response.statusCode = 404;
     } else {
       response.statusCode = 200;
     }
-
     response.writeHead(response.statusCode, headers);
     console.log('status code for post is', response.statusCode);
+    // console.log(dataObject.results.objectId);
     response.end(dataObject);
 
   } else if (request.method === 'POST') {
     console.log('in Post');
+
     response.statusCode = 201;
     response.writeHead(response.statusCode, headers);
     console.log('status code for post is', response.statusCode);
@@ -90,13 +97,27 @@ var requestHandler = function(request, response) {
     request.on('end', function() {
 
       var post = JSON.parse(body);
+      //var temp = {};
+      //temp.objectId = count++;
+      //temp.text = post;
+
+      // obj.results.push(post);
+      post.objectId = count++;
       obj.results.push(post);
-
     });
-
     response.end();
+  } else if (request.method === 'OPTIONS') {
+    console.log('HANDELING THE OPTIONS REQUEST');
+    response.statusCode = 200;
+    //not sure about what to put inside the response.end();
+    
+    response.writeHead(response.statusCode, optionsHeaders);
+    //response.writeHead(response.statusCode, headers);
+    console.log('status code for post is', response.statusCode);
+    response.end(JSON.stringify(null)); //copied from Fred's code
+
   }
-  //response.writeHead(statusCode, headers);
+  
 
 
 
